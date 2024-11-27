@@ -35,6 +35,7 @@ class MyViewModel : ViewModel() {
 
     fun comparar(nComparar: Int): Boolean {
         //estadosAuxiliares()
+        cuentaAtrasFun()
         Log.d(TAG_LOG, "Comprobación de la variable - Estado --> ${estadoDelJuego.value}")
         return if (nComparar.equals(Datos._number)){
             estadoDelJuego.value = EstadosJuego.INICIO

@@ -37,6 +37,7 @@ fun Juego(modifier: Modifier = Modifier, viewModel: MyViewModel){
         .background(Color.White),
         contentAlignment = Alignment.Center){
         Column(verticalArrangement = Arrangement.Center){
+            TextoCuentaAtras(viewModel)
             TextoRonda(myViewModel = viewModel)
             Row(horizontalArrangement = Arrangement.Center) {
                 CrearBoton(modifier,viewModel,coloresJuego.ROJO)
@@ -116,7 +117,11 @@ fun TextoRonda(myViewModel: MyViewModel, modifier: Modifier = Modifier){
     Text("Ronda $ronda", modifier = modifier.padding(20.dp))
 }
 
-
+@Composable
+fun TextoCuentaAtras(myViewModel: MyViewModel, modifier: Modifier = Modifier){
+    var cuenta by remember { mutableStateOf(myViewModel.cuentaAtras) }
+    Text(cuenta.value, modifier = modifier.padding(20.dp))
+}
 @Preview(showBackground = true)
 @Composable
 fun IUPreview(){
