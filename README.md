@@ -5,7 +5,7 @@
 ### IU
 La IU está compuesta por cinco botones y un texto.   
 Cuatro de los botones son los que se utilizan para jugar e intentar adivinar el número. El siguiente código es el que se utiliza para crear esos botones:   
-``
+````
 @Composable
 private fun CrearBoton(modifier: Modifier, viewModel: MyViewModel, clase_enum: coloresJuego) {
     val TAG_LOG: String = "Mi_debug_IU"
@@ -26,4 +26,4 @@ private fun CrearBoton(modifier: Modifier, viewModel: MyViewModel, clase_enum: c
     }
 }
 
-``
+````
