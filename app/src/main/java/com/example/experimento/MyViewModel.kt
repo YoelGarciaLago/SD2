@@ -13,6 +13,10 @@ class MyViewModel : ViewModel() {
     val TAG_LOG : String = "Mi_debug"
     var _numbers = mutableStateOf(0)
     var estadoDelJuego : MutableLiveData<EstadosJuego> = MutableLiveData(EstadosJuego.INICIO)
+    val estadoLiveData: MutableLiveData<EstadosJuego?> = MutableLiveData(EstadosJuego.INICIO)
+
+    private val TAG_LOG_CUENTA = "miDebug_Cuenta"
+    val cuentaAtras = mutableStateOf("Cuenta atrás :D")
 
 
     fun crearRandom(){
@@ -30,7 +34,7 @@ class MyViewModel : ViewModel() {
     }
 
     fun comparar(nComparar: Int): Boolean {
-        estadosAuxiliares()
+        //estadosAuxiliares()
         Log.d(TAG_LOG, "Comprobación de la variable - Estado --> ${estadoDelJuego.value}")
         return if (nComparar.equals(Datos._number)){
             estadoDelJuego.value = EstadosJuego.INICIO
@@ -46,17 +50,44 @@ class MyViewModel : ViewModel() {
     }
     fun estadosAuxiliares(){
         viewModelScope.launch(){
-            var estadosAux : EstadosAux = EstadosAux.AUX1
+            var estadosAux : EstadosAuxiliares = EstadosAuxiliares.AUX1
             Log.d(TAG_LOG,"estado auxiliar ${estadosAux.txt}")
             delay(1500)
-            estadosAux = EstadosAux.AUX2
+            estadosAux = EstadosAuxiliares.AUX2
             Log.d(TAG_LOG,"estado auxiliar ${estadosAux.txt}")
             delay(1500)
-            estadosAux = EstadosAux.AUX3
+            estadosAux = EstadosAuxiliares.AUX3
             Log.d(TAG_LOG,"estado auxiliar ${estadosAux.txt}")
             delay(1500)
-
+            estadosAux = EstadosAuxiliares.AUX4
+            Log.d(TAG_LOG,"estado auxiliar ${estadosAux.txt}")
+            delay(1500)
+            estadosAux = EstadosAuxiliares.AUX5
+            Log.d(TAG_LOG,"estado auxiliar ${estadosAux.txt}")
+            delay(1500)
 
         }
+    }
+    fun cuentaAtrasFun(){
+        viewModelScope.launch() {
+
+            for(i in EstadosAuxiliares.values()){
+                Log.d(TAG_LOG_CUENTA, "${i.txt}")
+                cuentaAtras.value = i.numeroTxT
+                delay(1000)
+                if(cuentaAtras.value.equals("0")){
+                    estadoLiveData.value = EstadosJuego.INICIO
+                    cuentaAtras.value = "Se acabó el tiempo"
+                }
+                if(estadoLiveData.value == EstadosJuego.INICIO){
+                    cuentaAtras.value = "Good"
+                    break
+                }
+            }
+
+        }
+    }
+    fun getRondaValue(): MutableLiveData<Int>{
+        return Datos.rondas
     }
 }
