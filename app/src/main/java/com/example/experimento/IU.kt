@@ -27,19 +27,25 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import kotlinx.coroutines.delay
 
+//Composable que es llamada en la main activity
 @Composable
 fun IU (viewModel: MyViewModel){
     Juego(viewModel = viewModel)
 }
+
+//Composable principal que alberga todos los componentes que se ve en la pantalla
 @Composable
 fun Juego(modifier: Modifier = Modifier, viewModel: MyViewModel){
+    //Caja para poder poner en el centro horizontal de todo todos los componentes
     Box(modifier = modifier.fillMaxSize()
         .background(Color.White),
         contentAlignment = Alignment.Center){
+        //Columna para que se pongan verticalmente centrado
         Column(verticalArrangement = Arrangement.Center){
 
-
+            //Texto donde se va a ver el valor de las rondas
             TextoRonda(myViewModel = viewModel)
+            //Primera fila de botones. Uso rows para que queden dos y dos
             Row(horizontalArrangement = Arrangement.Center) {
                 CrearBoton(modifier,viewModel,coloresJuego.ROJO)
                 CrearBoton(modifier,viewModel,coloresJuego.AZUL)
@@ -50,41 +56,56 @@ fun Juego(modifier: Modifier = Modifier, viewModel: MyViewModel){
 
             }
         }
+        //Columna separada para poner el boton de start bien separado y diferenciado
         Column(modifier = modifier.align(Alignment.BottomCenter).padding(bottom = 50.dp)) {
-            //CrearBoton(modifier,viewModel, coloresJuego.AMARILLO_START)
             CrearBotonStart(modifier,viewModel, coloresJuego.AMARILLO_START)
         }
     }
 }
 
+//Composable que se encarga de crear los botones de colores con los que se juegan
 @Composable
 private fun CrearBoton(modifier: Modifier, viewModel: MyViewModel, clase_enum: coloresJuego) {
+//Tag diferenciada para poder ver como va el programa
     val TAG_LOG : String = "Mi_debug_IU"
+    //Variable que se usa para ver si es el estado es el indicado para habilitar el boton
     var _activo = remember { mutableStateOf(viewModel.estadoDelJuego.value!!.boton_activo) }
+    //Observer de la variable. Cualquier modificación hecha en esta vaaraible permitirá la actualización de la vista
     viewModel.estadoDelJuego.observe(LocalLifecycleOwner.current) {
         _activo.value = viewModel.estadoDelJuego.value!!.boton_activo
     }
+    //Creación y características del botón
     Button(
+        //Dependiendo del estado del observable, está activo o no
         enabled = _activo.value,
+        //Función que muestra un log, que este mismo muestra que botón estamos usando y el estado actual del juego, y llama a la función de comparar
         onClick = { Log.d(TAG_LOG,"Dentro del botón ${clase_enum.txt} - Estado --> ${viewModel.estadoDelJuego.value!!.name}")
             viewModel.comparar(clase_enum.valorNumerico) },
+        //Modificaciones del botón
         modifier = modifier.padding(4.dp),
         colors = ButtonDefaults.buttonColors(clase_enum.colorBoton)
 
     ) {
+        //Texto que lleva cada botón
         Text(clase_enum.txt, fontWeight = FontWeight.Bold, fontStyle = FontStyle.Italic, color = Color.Black)
     }
 }
 
+//Composable que crea el botón start
 @Composable
 private fun CrearBotonStart(modifier: Modifier, viewModel: MyViewModel, clase_enum: coloresJuego) {
-    val TAG_LOG = "Mi_debug_IU"
+//Tag característico del start
+    val TAG_LOG = "Mi_debug_IU_start"
+    //Variable que se va a observar en la app para ver si es necesario habilitar el botón o no
     var _activo = remember { mutableStateOf(viewModel.estadoDelJuego.value!!.start_activo) }
     viewModel.estadoDelJuego.observe(LocalLifecycleOwner.current) {
         _activo.value = viewModel.estadoDelJuego.value!!.start_activo
     }
+    //Variable creada para modificar  el color en la siguiente corrutina
     var color = remember { mutableStateOf(clase_enum.colorBoton) }
 
+    //Corrutina que se ejecuta siempre y cuando la variable observada _activo sea true. Esta hace que mientras sea cierto, se cambie la variable color cada medio segundo
+    //Si el valor de activo pasa a false esta corrutina se detiene y si vuelve a true vuelve a empezar
     LaunchedEffect(_activo) {
         while (true){
             color.value = clase_enum.colorBoton
@@ -104,8 +125,10 @@ private fun CrearBotonStart(modifier: Modifier, viewModel: MyViewModel, clase_en
         Text(clase_enum.txt, fontWeight = FontWeight.Bold, fontStyle = FontStyle.Italic, color = Color.Black)
     }
 }
+//Composable que muestra las rondas
 @Composable
 fun TextoRonda(myViewModel: MyViewModel, modifier: Modifier = Modifier){
+//Variable para pillar las rondas
     var ronda by remember { mutableStateOf(0) }
     val lifecycleOwner = LocalLifecycleOwner.current
 
