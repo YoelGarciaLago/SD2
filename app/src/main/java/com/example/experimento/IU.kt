@@ -12,6 +12,7 @@ import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
@@ -22,6 +23,7 @@ import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import kotlinx.coroutines.delay
 
 @Composable
 fun IU (viewModel: MyViewModel){
@@ -76,12 +78,23 @@ private fun CrearBotonStart(modifier: Modifier, viewModel: MyViewModel, clase_en
     viewModel.estadoDelJuego.observe(LocalLifecycleOwner.current) {
         _activo.value = viewModel.estadoDelJuego.value!!.start_activo
     }
+    var color = remember { mutableStateOf(clase_enum.colorBoton) }
+
+    LaunchedEffect(_activo) {
+        while (true){
+            color.value = clase_enum.colorBoton
+            delay(500)
+            color.value = Color.LightGray
+            delay(500)
+        }
+    }
+
     Button(
         enabled = _activo.value,
         onClick = { Log.d(TAG_LOG,"Dentro del start - Estado --> ${viewModel.estadoDelJuego.value!!.name}")
             viewModel.crearRandom() },
         modifier = modifier.padding(4.dp),
-        colors = ButtonDefaults.buttonColors(clase_enum.colorBoton)
+        colors = ButtonDefaults.buttonColors(color.value)
     ) {
         Text(clase_enum.txt, fontWeight = FontWeight.Bold, fontStyle = FontStyle.Italic, color = Color.Black)
     }
