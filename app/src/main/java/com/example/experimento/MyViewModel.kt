@@ -1,17 +1,19 @@
 package com.example.experimento
 
 import android.util.Log
-import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.mutableStateOf
-import androidx.compose.ui.window.Dialog
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 
 class MyViewModel : ViewModel() {
 
     val TAG_LOG : String = "Mi_debug"
     var _numbers = mutableStateOf(0)
     var estadoDelJuego : MutableLiveData<EstadosJuego> = MutableLiveData(EstadosJuego.INICIO)
+
 
     fun crearRandom(){
         estadoDelJuego.value = EstadosJuego.GENERANDO
@@ -28,9 +30,12 @@ class MyViewModel : ViewModel() {
     }
 
     fun comparar(nComparar: Int): Boolean {
+        estadosAuxiliares()
         Log.d(TAG_LOG, "Comprobación de la variable - Estado --> ${estadoDelJuego.value}")
         return if (nComparar.equals(Datos._number)){
             estadoDelJuego.value = EstadosJuego.INICIO
+            Datos.rondas.value = Datos.rondas.value?.plus(1)
+            Log.d(TAG_LOG,"Valor de ronda: ${Datos.rondas.value}")
             Log.d(TAG_LOG,"Has acertado - Estado --> ${estadoDelJuego.value}")
             true
         }else{
@@ -39,5 +44,19 @@ class MyViewModel : ViewModel() {
             false
         }
     }
+    fun estadosAuxiliares(){
+        viewModelScope.launch(){
+            var estadosAux : EstadosAux = EstadosAux.AUX1
+            Log.d(TAG_LOG,"estado auxiliar ${estadosAux.txt}")
+            delay(1500)
+            estadosAux = EstadosAux.AUX2
+            Log.d(TAG_LOG,"estado auxiliar ${estadosAux.txt}")
+            delay(1500)
+            estadosAux = EstadosAux.AUX3
+            Log.d(TAG_LOG,"estado auxiliar ${estadosAux.txt}")
+            delay(1500)
 
+
+        }
+    }
 }
