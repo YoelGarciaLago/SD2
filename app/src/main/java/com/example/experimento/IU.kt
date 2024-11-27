@@ -13,8 +13,10 @@ import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -35,6 +37,7 @@ fun Juego(modifier: Modifier = Modifier, viewModel: MyViewModel){
         .background(Color.White),
         contentAlignment = Alignment.Center){
         Column(verticalArrangement = Arrangement.Center){
+            TextoRonda(myViewModel = viewModel)
             Row(horizontalArrangement = Arrangement.Center) {
                 CrearBoton(modifier,viewModel,coloresJuego.ROJO)
                 CrearBoton(modifier,viewModel,coloresJuego.AZUL)
@@ -99,6 +102,20 @@ private fun CrearBotonStart(modifier: Modifier, viewModel: MyViewModel, clase_en
         Text(clase_enum.txt, fontWeight = FontWeight.Bold, fontStyle = FontStyle.Italic, color = Color.Black)
     }
 }
+@Composable
+fun TextoRonda(myViewModel: MyViewModel, modifier: Modifier = Modifier){
+    var ronda by remember { mutableStateOf(0) }
+    val lifecycleOwner = LocalLifecycleOwner.current
+
+    // Observa manualmente el LiveData
+    LaunchedEffect(Unit) {
+        myViewModel.getRondaValue().observe(lifecycleOwner) {
+            ronda = it ?: 0
+        }
+    }
+    Text("Ronda $ronda", modifier = modifier.padding(20.dp))
+}
+
 
 @Preview(showBackground = true)
 @Composable
