@@ -14,7 +14,6 @@ class MyViewModel : ViewModel() {
     var _numbers = mutableStateOf(0)
     var estadoDelJuego : MutableLiveData<EstadosJuego> = MutableLiveData(EstadosJuego.INICIO)
     val estadoLiveData: MutableLiveData<EstadosJuego?> = MutableLiveData(EstadosJuego.INICIO)
-
     private val TAG_LOG_CUENTA = "miDebug_Cuenta"
     val cuentaAtras = mutableStateOf("Cuenta atrás :D")
 
@@ -25,6 +24,7 @@ class MyViewModel : ViewModel() {
         //Datos._number = _numbers.value
         Log.d(TAG_LOG, "Valor random creado --> ${_numbers.value} - Estado --> ${estadoDelJuego.value}")
         pasarRandom()
+        cuentaAtrasFun()
     }
 
     fun pasarRandom(){
@@ -35,7 +35,7 @@ class MyViewModel : ViewModel() {
 
     fun comparar(nComparar: Int): Boolean {
         //estadosAuxiliares()
-        cuentaAtrasFun()
+
         Log.d(TAG_LOG, "Comprobación de la variable - Estado --> ${estadoDelJuego.value}")
         return if (nComparar.equals(Datos._number)){
             estadoDelJuego.value = EstadosJuego.INICIO
@@ -44,7 +44,7 @@ class MyViewModel : ViewModel() {
             Log.d(TAG_LOG,"Has acertado - Estado --> ${estadoDelJuego.value}")
             true
         }else{
-            estadoDelJuego.value = EstadosJuego.ADIVINANDO
+//            estadoDelJuego.value = EstadosJuego.ADIVINANDO
             Log.d(TAG_LOG,"No has acertado - Estado --> ${estadoDelJuego.value}")
             false
         }
@@ -70,22 +70,21 @@ class MyViewModel : ViewModel() {
         }
     }
     fun cuentaAtrasFun(){
-        viewModelScope.launch() {
-
+        viewModelScope.launch {
             for(i in EstadosAuxiliares.values()){
                 Log.d(TAG_LOG_CUENTA, "${i.txt}")
                 cuentaAtras.value = i.numeroTxT
-                delay(1000)
+                delay(1000)  // Pausa de 1 segundo entre cada cambio de cuenta
+
+                // Cuando llegue a "0", actualiza la cuenta y cambia el estado
                 if(cuentaAtras.value.equals("0")){
+                    cuentaAtras.value = "Se acabó el tiempo" // Cambia el texto final
                     estadoLiveData.value = EstadosJuego.INICIO
-                    cuentaAtras.value = "Se acabó el tiempo"
-                }
-                if(estadoLiveData.value == EstadosJuego.INICIO){
-                    cuentaAtras.value = "Good"
-                    break
+                    Datos.rondas.value = 1// Cambia el estado al finalizar la cuenta
+                    break  // Sale del ciclo una vez terminado
+
                 }
             }
-
         }
     }
     fun getRondaValue(): MutableLiveData<Int>{
