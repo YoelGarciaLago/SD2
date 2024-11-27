@@ -46,6 +46,7 @@ class MyViewModel : ViewModel() {
             Datos.rondas.value = Datos.rondas.value?.plus(1)
             Log.d(TAG_LOG,"Valor de ronda: ${Datos.rondas.value}")
             Log.d(TAG_LOG,"Has acertado - Estado --> ${estadoDelJuego.value}")
+            crearRandom()
             //devuelve true para que se actualice en la IU
             true
         }else{
