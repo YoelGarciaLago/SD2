@@ -37,8 +37,7 @@ fun Juego(modifier: Modifier = Modifier, viewModel: MyViewModel){
         .background(Color.White),
         contentAlignment = Alignment.Center){
         Column(verticalArrangement = Arrangement.Center){
-            var cuenta by remember { mutableStateOf(viewModel.cuentaAtras) }
-            Text(cuenta.value)
+
 
             TextoRonda(myViewModel = viewModel)
             Row(horizontalArrangement = Arrangement.Center) {

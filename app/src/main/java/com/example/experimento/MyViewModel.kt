@@ -13,9 +13,7 @@ class MyViewModel : ViewModel() {
     val TAG_LOG : String = "Mi_debug"
     var _numbers = mutableStateOf(0)
     var estadoDelJuego : MutableLiveData<EstadosJuego> = MutableLiveData(EstadosJuego.INICIO)
-    val estadoLiveData: MutableLiveData<EstadosJuego?> = MutableLiveData(EstadosJuego.INICIO)
     private val TAG_LOG_CUENTA = "miDebug_Cuenta"
-    val cuentaAtras = mutableStateOf("Cuenta atrás :D")
 
 
     fun crearRandom(){
@@ -24,7 +22,6 @@ class MyViewModel : ViewModel() {
         //Datos._number = _numbers.value
         Log.d(TAG_LOG, "Valor random creado --> ${_numbers.value} - Estado --> ${estadoDelJuego.value}")
         pasarRandom()
-        cuentaAtrasFun()
     }
 
     fun pasarRandom(){
@@ -44,7 +41,8 @@ class MyViewModel : ViewModel() {
             Log.d(TAG_LOG,"Has acertado - Estado --> ${estadoDelJuego.value}")
             true
         }else{
-//            estadoDelJuego.value = EstadosJuego.ADIVINANDO
+            estadoDelJuego.value = EstadosJuego.INICIO
+            Datos.rondas.value = 1
             Log.d(TAG_LOG,"No has acertado - Estado --> ${estadoDelJuego.value}")
             false
         }
@@ -69,24 +67,7 @@ class MyViewModel : ViewModel() {
 
         }
     }
-    fun cuentaAtrasFun(){
-        viewModelScope.launch {
-            for(i in EstadosAuxiliares.values()){
-                Log.d(TAG_LOG_CUENTA, "${i.txt}")
-                cuentaAtras.value = i.numeroTxT
-                delay(1000)  // Pausa de 1 segundo entre cada cambio de cuenta
 
-                // Cuando llegue a "0", actualiza la cuenta y cambia el estado
-                if(cuentaAtras.value.equals("0")){
-                    cuentaAtras.value = "Se acabó el tiempo" // Cambia el texto final
-                    estadoLiveData.value = EstadosJuego.INICIO
-                    Datos.rondas.value = 1// Cambia el estado al finalizar la cuenta
-                    break  // Sale del ciclo una vez terminado
-
-                }
-            }
-        }
-    }
     fun getRondaValue(): MutableLiveData<Int>{
         return Datos.rondas
     }
